@@ -1,0 +1,46 @@
+<%- include('partials/header'); -%>
+
+<form action="/signup">
+    <h2>Login</h2>
+    <div class="allOfThem error"></div>
+    <label for="email">Email</label>
+    <input type="text" name="email" required />
+    <label for="password">Password</label>
+    <input type="password" name="password" required />
+    <button class="submitBtn">login</button>
+</form>
+
+<%- include('partials/footer'); -%>
+
+<script>
+    const form = document.querySelector('form');
+    const allOfThemError = document.querySelector('.allOfThem.error')
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // get values
+        const email = form.email.value;
+        const password = form.password.value;
+        
+        allOfThemError.textContent = '';
+
+        try {
+            const res = await fetch('/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+                headers: {'Content-Type': 'application/json'}
+            });
+            const data = await res.json()
+            console.log(data.authentificated)
+            if(data.errors) {
+                console.log(data.errors.AllOfThem);
+                allOfThemError.textContent = data.errors.AllOfThem
+            }
+            if(data.authentificated) {
+                location.assign('/')
+            }
+        } catch (error) {
+            console.log('THE ERROR IS: ' + error)
+        }
+    });
+</script>
